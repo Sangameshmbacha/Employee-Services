@@ -1,0 +1,11 @@
+package com.example.dto;
+import java.time.LocalDate;
+
+import lombok.Getter;
+import lombok.Setter;
+@Getter
+@Setter
+public class StatusDTO {
+    private Boolean isActive;
+    private LocalDate lastWorkingDay;
+}
