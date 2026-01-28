@@ -16,6 +16,7 @@ import com.example.entity.PersonalInfo;
 import com.example.entity.Project;
 import com.example.entity.Skill;
 import com.example.enums.EmploymentStatus;
+import com.example.Exception.ResourceAlreadyExistsException;
 import com.example.Mapper.EmployeeMapper;
 import com.example.repository.DepartmentRepository;
 import com.example.repository.DesignationRepository;
@@ -35,35 +36,57 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO dto) {
 
+      
+    	String email = dto.getPersonalInfo().getContact().getEmail();
+
+    	if (employeeRepository.existsByPersonalInfo_Contact_Email(email)) {
+    	    throw new ResourceAlreadyExistsException(
+    	        "Employee already exists with email: " + email
+    	    );
+    	}
+
         Department department = departmentRepository
                 .findByName(dto.getEmploymentDetails().getDepartment())
                 .orElseThrow(() -> new RuntimeException("Department not found"));
 
-          Designation designation = designationRepository
+        Designation designation = designationRepository
                 .findByName(dto.getEmploymentDetails().getDesignation())
                 .orElseThrow(() -> new RuntimeException("Designation not found"));
 
-            EmploymentDetails employmentDetails = new EmploymentDetails();
+        
+        EmploymentDetails employmentDetails = new EmploymentDetails();
         employmentDetails.setDepartment(department);
         employmentDetails.setDesignation(designation);
         employmentDetails.setEmploymentType(dto.getEmploymentDetails().getEmploymentType());
         employmentDetails.setDateOfJoining(dto.getEmploymentDetails().getDateOfJoining());
-        employmentDetails.setProbationPeriodMonths(dto.getEmploymentDetails().getProbationPeriodMonths());
+        employmentDetails.setProbationPeriodMonths(
+                dto.getEmploymentDetails().getProbationPeriodMonths()
+        );
         employmentDetails.setManagerId(dto.getEmploymentDetails().getManagerId());
 
         if (dto.getEmploymentDetails().getWorkLocation() != null) {
-            employmentDetails.setOffice(dto.getEmploymentDetails().getWorkLocation().getOffice());
-            employmentDetails.setMode(dto.getEmploymentDetails().getWorkLocation().getMode());
+            employmentDetails.setOffice(
+                    dto.getEmploymentDetails().getWorkLocation().getOffice()
+            );
+            employmentDetails.setMode(
+                    dto.getEmploymentDetails().getWorkLocation().getMode()
+            );
         }
 
-          Contact contact = new Contact();
+       
+        Contact contact = new Contact();
         contact.setEmail(dto.getPersonalInfo().getContact().getEmail());
 
         if (dto.getPersonalInfo().getContact().getPhone() != null) {
-            contact.setCountryCode(dto.getPersonalInfo().getContact().getPhone().getCountryCode());
-            contact.setPhoneNumber(dto.getPersonalInfo().getContact().getPhone().getNumber());
+            contact.setCountryCode(
+                    dto.getPersonalInfo().getContact().getPhone().getCountryCode()
+            );
+            contact.setPhoneNumber(
+                    dto.getPersonalInfo().getContact().getPhone().getNumber()
+            );
         }
 
+       
         PersonalInfo personalInfo = new PersonalInfo();
         personalInfo.setFirstName(dto.getPersonalInfo().getFirstName());
         personalInfo.setLastName(dto.getPersonalInfo().getLastName());
@@ -72,8 +95,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         personalInfo.setNationality(dto.getPersonalInfo().getNationality());
         personalInfo.setContact(contact);
 
+        
         Employee employee = new Employee();
-        employee.setEmployeeId(dto.getEmployeeId());
         employee.setPersonalInfo(personalInfo);
         employee.setEmploymentDetails(employmentDetails);
         employee.setStatus(EmploymentStatus.ACTIVE);
@@ -81,28 +104,34 @@ public class EmployeeServiceImpl implements EmployeeService {
                 dto.getStatus() != null ? dto.getStatus().getIsActive() : true
         );
 
+        
         if (dto.getSkills() != null) {
-            List<Skill> skills = dto.getSkills().stream().map(s -> {
-                Skill skill = new Skill();
-                skill.setName(s.getName());
-                skill.setLevel(s.getLevel());
-                skill.setYearsOfExperience(s.getYearsOfExperience());
-                skill.setEmployee(employee);
-                return skill;
-            }).collect(Collectors.toList());
+            List<Skill> skills = dto.getSkills().stream()
+                    .map(s -> {
+                        Skill skill = new Skill();
+                        skill.setName(s.getName());
+                        skill.setLevel(s.getLevel());
+                        skill.setYearsOfExperience(s.getYearsOfExperience());
+                        skill.setEmployee(employee);
+                        return skill;
+                    })
+                    .collect(Collectors.toList());
             employee.setSkills(skills);
         }
 
+        
         if (dto.getProjects() != null) {
-            List<Project> projects = dto.getProjects().stream().map(p -> {
-                Project project = new Project();
-                project.setProjectId(p.getProjectId());
-                project.setProjectName(p.getProjectName());
-                project.setRole(p.getRole());
-                project.setAllocationPercentage(p.getAllocationPercentage());
-                project.setEmployee(employee);
-                return project;
-            }).collect(Collectors.toList());
+            List<Project> projects = dto.getProjects().stream()
+                    .map(p -> {
+                        Project project = new Project();
+                        project.setProjectId(p.getProjectId());
+                        project.setProjectName(p.getProjectName());
+                        project.setRole(p.getRole());
+                        project.setAllocationPercentage(p.getAllocationPercentage());
+                        project.setEmployee(employee);
+                        return project;
+                    })
+                    .collect(Collectors.toList());
             employee.setProjects(projects);
         }
 
@@ -118,21 +147,40 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeResponseDTO> getEmployees(String department, EmploymentStatus status) {
+    public List<EmployeeResponseDTO> getEmployees(String department, EmploymentStatus status,String skill,
+            String project) {
 
-        List<Employee> employees;
-
-        if (department != null) {
-            employees = employeeRepository
-                    .findByEmploymentDetails_Department_Name(department);
-        } else {
-            employees = employeeRepository.findAll();
-        }
+        List<Employee> employees = (department != null)
+                ? employeeRepository.findByEmploymentDetails_Department_Name(department)
+                : employeeRepository.findAll();
 
         if (status != null) {
             employees = employees.stream()
                     .filter(e -> e.getStatus() == status)
                     .toList();
+            if (skill != null) {
+                employees = employees.stream()
+                        .filter(e ->
+                                e.getSkills() != null &&
+                                e.getSkills().stream()
+                                        .anyMatch(s ->
+                                                s.getName().equalsIgnoreCase(skill)
+                                        )
+                        )
+                        .toList();
+            }
+
+            if (project != null) {
+                employees = employees.stream()
+                        .filter(e ->
+                                e.getProjects() != null &&
+                                e.getProjects().stream()
+                                        .anyMatch(p ->
+                                                p.getProjectName().equalsIgnoreCase(project)
+                                        )
+                        )
+                        .toList();
+            }
         }
 
         return employees.stream()

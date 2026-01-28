@@ -12,7 +12,7 @@ public class ContactDTO {
     @Email
     @NotBlank
     private String email;
-
     private PhoneDTO phone;
+    
     private List<AddressDTO> address;
 }

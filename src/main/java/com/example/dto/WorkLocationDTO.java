@@ -5,6 +5,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class WorkLocationDTO {
+	
     private String office;
     private String mode;
 }

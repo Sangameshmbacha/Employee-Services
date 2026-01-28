@@ -19,4 +19,6 @@ public class EmploymentDetailsDTO {
     private Integer probationPeriodMonths;
     private String managerId;
     private WorkLocationDTO workLocation;
+    private String AddressDTO;
+    
 }

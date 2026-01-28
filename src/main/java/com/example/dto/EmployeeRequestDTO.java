@@ -11,8 +11,8 @@ import lombok.Setter;
 @Setter
 public class EmployeeRequestDTO {
 
-    @NotBlank
-    private String employeeId;
+//    @NotBlank
+//    private String employeeId;
 
     @NotNull
     private PersonalInfoDTO personalInfo;
@@ -25,4 +25,5 @@ public class EmployeeRequestDTO {
 
     private StatusDTO status;
     private AuditDTO audit;
+    private AddressDTO Addressdto;
 }

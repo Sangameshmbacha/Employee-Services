@@ -27,6 +27,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
+
 public class Employee {
 
     @Id
@@ -34,7 +36,7 @@ public class Employee {
     @SequenceGenerator(name = "emp_seq", sequenceName = "emp_seq", allocationSize = 1)
     private Long id;
 
-    private String employeeId;
+
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "personal_info_id")
@@ -54,4 +56,6 @@ public class Employee {
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Project> projects;
+    
+    
 }

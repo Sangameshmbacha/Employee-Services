@@ -17,7 +17,7 @@ import lombok.Setter;
 public class EmployeeResponseDTO {
 
     private Long id;
-    private String employeeId;
+
 
     private String firstName;
     private String lastName;

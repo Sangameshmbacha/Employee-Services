@@ -2,6 +2,7 @@ package com.example.entity;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,7 +36,10 @@ public class EmploymentDetails {
     private Integer probationPeriodMonths;
     private String managerId;
 
-   
     private String office;
     private String mode;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
+    private Address address;
+
 }

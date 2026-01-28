@@ -18,9 +18,9 @@ public class EmployeeMapper {
 
         return EmployeeResponseDTO.builder()
 
+               
                 .id(employee.getId())
-                .employeeId(employee.getEmployeeId())
-
+                
                 .firstName(
                         employee.getPersonalInfo() != null
                                 ? employee.getPersonalInfo().getFirstName()
@@ -47,6 +47,7 @@ public class EmployeeMapper {
                                 : null
                 )
 
+             
                 .email(
                         employee.getPersonalInfo() != null &&
                         employee.getPersonalInfo().getContact() != null
@@ -66,7 +67,7 @@ public class EmployeeMapper {
                                 : null
                 )
 
-               
+              
                 .designation(
                         employee.getEmploymentDetails() != null &&
                         employee.getEmploymentDetails().getDesignation() != null
@@ -118,35 +119,36 @@ public class EmployeeMapper {
                                 : null
                 )
 
+                
                 .skills(
-                        employee.getSkills() != null
-                                ? employee.getSkills()
-                                        .stream()
-                                        .map(skill -> SkillResponseDTO.builder()
-                                                .name(skill.getName())
-                                                .level(skill.getLevel())
-                                                .yearsOfExperience(skill.getYearsOfExperience())
-                                                .build()
-                                        )
-                                        .collect(Collectors.toList())
-                                : Collections.emptyList()
-                )
+                	    employee.getSkills() != null
+                	        ? employee.getSkills()
+                	            .stream()
+                	            .map(skill -> SkillResponseDTO.builder()
+                	                .name(skill.getName())
+                	                .level(skill.getLevel())
+                	                .yearsOfExperience(skill.getYearsOfExperience())
+                	                .build()
+                	            )
+                	            .collect(Collectors.toList())
+                	        : Collections.emptyList()
+                	)
 
-                        .projects(
-                        employee.getProjects() != null
-                                ? employee.getProjects()
-                                        .stream()
-                                        .map(project -> ProjectResponseDTO.builder()
-                                                .projectId(project.getProjectId())
-                                                .projectName(project.getProjectName())
-                                                .role(project.getRole())
-                                                .allocationPercentage(project.getAllocationPercentage())
-                                                .build()
-                                        )
-                                        .collect(Collectors.toList())
-                                : Collections.emptyList()
-                )
-
+                
+                	.projects(
+                	    employee.getProjects() != null
+                	        ? employee.getProjects()
+                	            .stream()
+                	            .map(project -> ProjectResponseDTO.builder()
+                	                .projectId(project.getProjectId())
+                	                .projectName(project.getProjectName())
+                	                .role(project.getRole())
+                	                .allocationPercentage(project.getAllocationPercentage())
+                	                .build()
+                	            )
+                	            .collect(Collectors.toList())
+                	        : Collections.emptyList()
+                	)
 
                 .build();
     }

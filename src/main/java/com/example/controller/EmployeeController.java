@@ -2,7 +2,7 @@ package com.example.controller;
 
 import java.util.List;
 
-import org.springframework.validation.annotation.Validated;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,43 +22,50 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;  
 
 @RestController
-@RequestMapping("/api/v1/employees")
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
-@Validated
 public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-    @PostMapping
-    public EmployeeResponseDTO createEmployee(
+   
+    @PostMapping("/employees")
+    public ResponseEntity<EmployeeResponseDTO> createEmployee(
             @Valid @RequestBody EmployeeRequestDTO dto) {
-    	return employeeService.createEmployee(dto);
+        return ResponseEntity.ok(employeeService.createEmployee(dto));
     }
+
     
-    @GetMapping("/{id}")
-    public EmployeeResponseDTO getEmployeeById(
+    @GetMapping("/employees/{id}")
+    public ResponseEntity<EmployeeResponseDTO> getEmployeeById(
             @PathVariable Long id) {
-    	return employeeService.getEmployeeById(id);
+        return ResponseEntity.ok(employeeService.getEmployeeById(id));
     }
 
-    @GetMapping
-    public List<EmployeeResponseDTO> getEmployees(
+
+    @GetMapping("/employees")
+    public ResponseEntity<List<EmployeeResponseDTO>> getEmployees(
             @RequestParam(required = false) String department,
-            @RequestParam(required = false) EmploymentStatus status) {
-    	return employeeService.getEmployees(department, status);
+            @RequestParam(required = false) EmploymentStatus status,
+            @RequestParam(required = false) String skills,
+            @RequestParam(required = false) String Project)
+            
+    {
+        return ResponseEntity.ok(employeeService.getEmployees(department, status, skills, Project));
     }
 
-    @PutMapping("/{id}")
-    public EmployeeResponseDTO updateEmployee(
+  
+    @PutMapping("/employees/{id}")
+    public ResponseEntity<EmployeeResponseDTO> updateEmployee(
             @PathVariable Long id,
             @Valid @RequestBody EmployeeRequestDTO dto) {
-    	return employeeService.updateEmployee(id, dto);
+        return ResponseEntity.ok(employeeService.updateEmployee(id, dto));
     }
 
-    @DeleteMapping("/{id}")
-    
-    public void deleteEmployee(
+    @DeleteMapping("/employees/{id}")
+    public ResponseEntity<Void> deleteEmployee(
             @PathVariable Long id) {
-    	employeeService.deleteEmployee(id);
+        employeeService.deleteEmployee(id);
+        return ResponseEntity.noContent().build();
     }
 }
