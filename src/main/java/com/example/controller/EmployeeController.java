@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.dto.EmployeeRequestDTO;
 import com.example.dto.EmployeeResponseDTO;
-import com.example.enums.EmploymentStatus;
 import com.example.service.EmployeeService;
 
 import jakarta.validation.Valid;
@@ -28,30 +27,27 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
 
-   
     @PostMapping("/employees")
     public ResponseEntity<EmployeeResponseDTO> createEmployee(
             @Valid @RequestBody EmployeeRequestDTO dto) {
         return ResponseEntity.ok(employeeService.createEmployee(dto));
     }
 
-    
     @GetMapping("/employees/{id}")
     public ResponseEntity<EmployeeResponseDTO> getEmployeeById(
             @PathVariable Long id) {
         return ResponseEntity.ok(employeeService.getEmployeeById(id));
     }
-
-
+    
     @GetMapping("/employees")
     public ResponseEntity<List<EmployeeResponseDTO>> getEmployees(
             @RequestParam(required = false) String department,
-            @RequestParam(required = false) EmploymentStatus status,
+            @RequestParam(required = false) String status,
             @RequestParam(required = false) String skills,
-            @RequestParam(required = false) String Project)
+            @RequestParam(required = false) String project)
             
     {
-        return ResponseEntity.ok(employeeService.getEmployees(department, status, skills, Project));
+        return ResponseEntity.ok(employeeService.getEmployees(department, status, skills, project));
     }
 
   

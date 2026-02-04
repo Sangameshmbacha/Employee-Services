@@ -7,5 +7,5 @@ import com.example.entity.Project;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
-    Optional<Project> findByProjectId(String projectId);
+    Optional<Project> findByProjectId(Integer projectId);
 }
