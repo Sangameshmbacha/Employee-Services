@@ -9,8 +9,8 @@ import com.example.entity.Employee;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-    List<Employee> findByEmploymentDetails_Department_Name(String departmentName);
+    List<Employee> findByDepartment_Name(String departmentName);
 
-    boolean existsByPersonalInfo_Contact_Email(String email);
+    boolean existsByEmail(String email);
 
 }

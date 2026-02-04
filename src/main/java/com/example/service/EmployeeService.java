@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.example.dto.EmployeeRequestDTO;
 import com.example.dto.EmployeeResponseDTO;
-import com.example.enums.EmploymentStatus;
 
 public interface EmployeeService {
 
@@ -12,7 +11,7 @@ public interface EmployeeService {
 
     EmployeeResponseDTO getEmployeeById(Long id);
 
-    List<EmployeeResponseDTO> getEmployees(String department, EmploymentStatus status, String Skills, String Project);
+    List<EmployeeResponseDTO> getEmployees(String department, String status, String skills, String project);
 
     EmployeeResponseDTO updateEmployee(Long id, EmployeeRequestDTO dto);
 

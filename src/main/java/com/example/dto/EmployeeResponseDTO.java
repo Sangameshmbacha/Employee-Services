@@ -3,6 +3,10 @@ package com.example.dto;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.example.enums.EmploymentMode;
+import com.example.enums.EmploymentType;
+import com.example.enums.Gender;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,33 +20,34 @@ import lombok.Setter;
 @AllArgsConstructor
 public class EmployeeResponseDTO {
 
-    private Long id;
-
+    private Long id;   
 
     private String firstName;
     private String lastName;
     private LocalDate dateOfBirth;
-    private String gender;
+    private Gender gender;
     private String nationality;
 
-   
     private String email;
-    private String countryCode;
-    private String phoneNumber;
+    private Integer countryCode;
+    private Long phoneNumber;
 
-  
     private String designation;
     private String department;
-    private String employmentType;
+
+    private EmploymentType employmentType;
+    private EmploymentMode mode;
+
     private LocalDate dateOfJoining;
     private Integer probationPeriodMonths;
-    private String managerId;
-    private String office;
-    private String mode;
+    private Integer managerId;
 
     private Boolean isActive;
     private String status;
-    
+
+    private List<AddressDTO> addresses;
     private List<SkillResponseDTO> skills;
+
     private List<ProjectResponseDTO> projects;
+
 }

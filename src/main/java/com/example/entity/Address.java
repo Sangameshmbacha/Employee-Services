@@ -13,12 +13,7 @@ import lombok.*;
 public class Address {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "addr_seq")
-    @SequenceGenerator(
-            name = "addr_seq",
-            sequenceName = "addr_seq",
-            allocationSize = 1
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String street;
@@ -26,10 +21,15 @@ public class Address {
     private String state;
     private String country;
     private String zipCode;
+    private String addressType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(
+        name = "employee_id",
+        foreignKey = @ForeignKey(name = "fk_addresses_employee")
+    )
     private Employee employee;
 }
+
 
 

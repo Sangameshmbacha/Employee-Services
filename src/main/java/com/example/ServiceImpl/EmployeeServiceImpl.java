@@ -5,19 +5,22 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.example.Exception.ResourceAlreadyExistsException;
+import com.example.Exception.ResourceNotFoundException;
+import com.example.Mapper.EmployeeMapper;
 import com.example.dto.EmployeeRequestDTO;
 import com.example.dto.EmployeeResponseDTO;
-import com.example.entity.Contact;
+import com.example.dto.ProjectRequestDTO;
+import com.example.entity.Address;
 import com.example.entity.Department;
 import com.example.entity.Designation;
 import com.example.entity.Employee;
-import com.example.entity.EmploymentDetails;
-import com.example.entity.PersonalInfo;
 import com.example.entity.Project;
 import com.example.entity.Skill;
+import com.example.enums.EmploymentMode;
 import com.example.enums.EmploymentStatus;
-import com.example.Exception.ResourceAlreadyExistsException;
-import com.example.Mapper.EmployeeMapper;
+import com.example.enums.EmploymentType;
+import com.example.enums.Gender;
 import com.example.repository.DepartmentRepository;
 import com.example.repository.DesignationRepository;
 import com.example.repository.EmployeeRepository;
@@ -36,169 +39,149 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO dto) {
 
-      
-    	String email = dto.getPersonalInfo().getContact().getEmail();
-
-    	if (employeeRepository.existsByPersonalInfo_Contact_Email(email)) {
-    	    throw new ResourceAlreadyExistsException(
-    	        "Employee already exists with email: " + email
-    	    );
-    	}
+        if (employeeRepository.existsByEmail(dto.getEmail())) {
+            throw new ResourceAlreadyExistsException(
+                    "Employee already exists with email: " + dto.getEmail());
+        }
 
         Department department = departmentRepository
-                .findByName(dto.getEmploymentDetails().getDepartment())
-                .orElseThrow(() -> new RuntimeException("Department not found"));
+                .findByName(dto.getDepartment())
+                .orElseThrow(() -> new ResourceNotFoundException("Department not found"));
 
         Designation designation = designationRepository
-                .findByName(dto.getEmploymentDetails().getDesignation())
-                .orElseThrow(() -> new RuntimeException("Designation not found"));
+                .findByName(dto.getDesignation())
+                .orElseThrow(() -> new ResourceNotFoundException("Designation not found"));
 
-        
-        EmploymentDetails employmentDetails = new EmploymentDetails();
-        employmentDetails.setDepartment(department);
-        employmentDetails.setDesignation(designation);
-        employmentDetails.setEmploymentType(dto.getEmploymentDetails().getEmploymentType());
-        employmentDetails.setDateOfJoining(dto.getEmploymentDetails().getDateOfJoining());
-        employmentDetails.setProbationPeriodMonths(
-                dto.getEmploymentDetails().getProbationPeriodMonths()
-        );
-        employmentDetails.setManagerId(dto.getEmploymentDetails().getManagerId());
-
-        if (dto.getEmploymentDetails().getWorkLocation() != null) {
-            employmentDetails.setOffice(
-                    dto.getEmploymentDetails().getWorkLocation().getOffice()
-            );
-            employmentDetails.setMode(
-                    dto.getEmploymentDetails().getWorkLocation().getMode()
-            );
-        }
-
-       
-        Contact contact = new Contact();
-        contact.setEmail(dto.getPersonalInfo().getContact().getEmail());
-
-        if (dto.getPersonalInfo().getContact().getPhone() != null) {
-            contact.setCountryCode(
-                    dto.getPersonalInfo().getContact().getPhone().getCountryCode()
-            );
-            contact.setPhoneNumber(
-                    dto.getPersonalInfo().getContact().getPhone().getNumber()
-            );
-        }
-
-       
-        PersonalInfo personalInfo = new PersonalInfo();
-        personalInfo.setFirstName(dto.getPersonalInfo().getFirstName());
-        personalInfo.setLastName(dto.getPersonalInfo().getLastName());
-        personalInfo.setDateOfBirth(dto.getPersonalInfo().getDateOfBirth());
-        personalInfo.setGender(dto.getPersonalInfo().getGender());
-        personalInfo.setNationality(dto.getPersonalInfo().getNationality());
-        personalInfo.setContact(contact);
-
-        
         Employee employee = new Employee();
-        employee.setPersonalInfo(personalInfo);
-        employee.setEmploymentDetails(employmentDetails);
-        employee.setStatus(EmploymentStatus.ACTIVE);
-        employee.setIsActive(
-                dto.getStatus() != null ? dto.getStatus().getIsActive() : true
-        );
+
+       
+        employee.setFirstName(dto.getFirstName());
+        employee.setLastName(dto.getLastName());
+        employee.setDateOfBirth(dto.getDateOfBirth());
+        employee.setNationality(dto.getNationality());
+        employee.setEmail(dto.getEmail());
+        employee.setPhoneNumber(dto.getPhoneNumber());
+        employee.setCountryCode(dto.getCountryCode());
+        
+        employee.setDateOfJoining(dto.getDateOfJoining());
+        employee.setProbationPeriodMonths(dto.getProbationPeriodMonths());
+        employee.setManagerId(dto.getManagerId());
+        employee.setIsActive(dto.getIsActive());
+
+       
+        employee.setGender(Gender.valueOf(dto.getGender().toUpperCase()));
+        employee.setEmploymentType(EmploymentType.valueOf(dto.getEmploymentType().toUpperCase()));
+        employee.setMode(EmploymentMode.valueOf(dto.getMode().toUpperCase()));
+
+
+        employee.setDepartment(department);
+        employee.setDesignation(designation);
 
         
+        employee.setStatus(EmploymentStatus.ACTIVE);
+        employee.setIsActive(true);
+
+        
+        if (dto.getAddresses() != null) {
+            List<Address> addresses = dto.getAddresses().stream().map(a -> {
+                Address address = new Address();
+                address.setStreet(a.getStreet());
+                address.setCity(a.getCity());
+                address.setState(a.getState());
+                address.setZipCode(a.getZipCode());
+                address.setCountry(a.getCountry());
+                address.setAddressType(a.getAddressType());
+                address.setEmployee(employee);
+                return address;
+            }).toList();
+            employee.setAddresses(addresses);
+        }
+
         if (dto.getSkills() != null) {
-            List<Skill> skills = dto.getSkills().stream()
-                    .map(s -> {
-                        Skill skill = new Skill();
-                        skill.setName(s.getName());
-                        skill.setLevel(s.getLevel());
-                        skill.setYearsOfExperience(s.getYearsOfExperience());
-                        skill.setEmployee(employee);
-                        return skill;
-                    })
-                    .collect(Collectors.toList());
+            List<Skill> skills = dto.getSkills().stream().map(s -> {
+                Skill skill = new Skill();
+                skill.setName(s.getName());
+                skill.setLevel(s.getLevel());
+                skill.setYearsOfExperience(s.getYearsOfExperience());
+                skill.setEmployee(employee);
+                return skill;
+            }).toList();
             employee.setSkills(skills);
         }
 
         
-        if (dto.getProjects() != null) {
-            List<Project> projects = dto.getProjects().stream()
-                    .map(p -> {
-                        Project project = new Project();
-                        project.setProjectId(p.getProjectId());
-                        project.setProjectName(p.getProjectName());
-                        project.setRole(p.getRole());
-                        project.setAllocationPercentage(p.getAllocationPercentage());
-                        project.setEmployee(employee);
-                        return project;
-                    })
-                    .collect(Collectors.toList());
-            employee.setProjects(projects);
+        if (dto.getProject() != null) {
+            ProjectRequestDTO projectDto = dto.getProject();
+
+            Project project = new Project();
+            project.setProjectId(projectDto.getProjectId());
+            project.setProjectName(projectDto.getProjectName());
+            project.setRole(projectDto.getRole());
+            project.setAllocationPercentage(projectDto.getAllocationPercentage());
+            project.setEmployee(employee);
+
+            employee.setProjects(List.of(project));
         }
 
-        Employee savedEmployee = employeeRepository.save(employee);
-        return EmployeeMapper.toResponseDto(savedEmployee);
+
+        return EmployeeMapper.toResponseDto(employeeRepository.save(employee));
     }
 
     @Override
     public EmployeeResponseDTO getEmployeeById(Long id) {
-        return employeeRepository.findById(id)
-                .map(EmployeeMapper::toResponseDto)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+        return EmployeeMapper.toResponseDto(employee);
     }
 
     @Override
-    public List<EmployeeResponseDTO> getEmployees(String department, EmploymentStatus status,String skill,
-            String project) {
+    public List<EmployeeResponseDTO> getEmployees(String department, String status, String skills, String project) {
+        List<Employee> employees = employeeRepository.findAll(); 
 
-        List<Employee> employees = (department != null)
-                ? employeeRepository.findByEmploymentDetails_Department_Name(department)
-                : employeeRepository.findAll();
+       
+        if (skills != null && !skills.isEmpty()) {
+            employees = employees.stream()
+                    .filter(e -> e.getSkills().stream()
+                            .anyMatch(s -> s.getName().equalsIgnoreCase(skills)))
+                    .collect(Collectors.toList());
+        }
+        
 
+        
         if (status != null) {
             employees = employees.stream()
-                    .filter(e -> e.getStatus() == status)
-                    .toList();
-            if (skill != null) {
-                employees = employees.stream()
-                        .filter(e ->
-                                e.getSkills() != null &&
-                                e.getSkills().stream()
-                                        .anyMatch(s ->
-                                                s.getName().equalsIgnoreCase(skill)
-                                        )
-                        )
-                        .toList();
-            }
-
-            if (project != null) {
-                employees = employees.stream()
-                        .filter(e ->
-                                e.getProjects() != null &&
-                                e.getProjects().stream()
-                                        .anyMatch(p ->
-                                                p.getProjectName().equalsIgnoreCase(project)
-                                        )
-                        )
-                        .toList();
-            }
+                    .filter(e -> e.getStatus().name().equalsIgnoreCase(status.toString()))
+                    .collect(Collectors.toList());
         }
+
+       
+        if (department != null && !department.isEmpty()) {
+            employees = employees.stream()
+                    .filter(e -> e.getDepartment().getName().equalsIgnoreCase(department))
+                    .collect(Collectors.toList());
+        }
+        
+        if (project != null && !project.isEmpty()) {
+            employees = employees.stream()
+                .filter(e -> e.getProjects() != null &&
+                             e.getProjects().stream()
+                                .anyMatch(p -> p.getProjectId().equalsIgnoreCase(project)))
+                .collect(Collectors.toList());
+        }
+
 
         return employees.stream()
                 .map(EmployeeMapper::toResponseDto)
-                .toList();
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public EmployeeResponseDTO updateEmployee(Long id, EmployeeRequestDTO dto) {
-
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
-
-        employee.getPersonalInfo().setFirstName(dto.getPersonalInfo().getFirstName());
-        employee.getPersonalInfo().setLastName(dto.getPersonalInfo().getLastName());
-        employee.getPersonalInfo().getContact()
-                .setEmail(dto.getPersonalInfo().getContact().getEmail());
-
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+        employee.setFirstName(dto.getFirstName());
+        employee.setLastName(dto.getLastName());
         return EmployeeMapper.toResponseDto(employeeRepository.save(employee));
     }
 
