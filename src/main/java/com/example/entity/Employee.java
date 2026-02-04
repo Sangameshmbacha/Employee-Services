@@ -62,7 +62,7 @@ public class Employee {
     private LocalDate dateOfJoining;
     private Integer probationPeriodMonths;
     private Integer managerId;
-//    private String office;
+
 
     @ManyToOne
     @JoinColumn(name = "designation_id", foreignKey = @ForeignKey(name = "fk_employee_designation"))
