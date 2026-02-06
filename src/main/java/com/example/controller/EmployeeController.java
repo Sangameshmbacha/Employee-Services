@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -43,11 +44,14 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeResponseDTO>> getEmployees(
             @RequestParam(required = false) String department,
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) String skills,
-            @RequestParam(required = false) String project)
-            
-    {
-        return ResponseEntity.ok(employeeService.getEmployees(department, status, skills, project));
+            @RequestParam(required = false) String skill,
+            @RequestParam(required = false) String project,
+            @RequestParam(required = false) LocalDate dob,
+            @RequestParam(required = false) LocalDate doj
+    ) {
+        return ResponseEntity.ok(
+                employeeService.getEmployees(department, status, skill, project, dob, doj)
+        );
     }
 
   

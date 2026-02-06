@@ -3,11 +3,9 @@ package com.example.Mapper;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-import com.example.dto.AddressDTO;
-import com.example.dto.EmployeeResponseDTO;
-import com.example.dto.ProjectResponseDTO;
-import com.example.dto.SkillResponseDTO;
+import com.example.dto.*;
 import com.example.entity.Employee;
+import com.example.entity.Employment;
 
 public class EmployeeMapper {
 
@@ -16,6 +14,8 @@ public class EmployeeMapper {
         if (employee == null) {
             return null;
         }
+
+        Employment emp = employee.getEmployment();
 
         return EmployeeResponseDTO.builder()
 
@@ -30,14 +30,6 @@ public class EmployeeMapper {
                 .phoneNumber(employee.getPhoneNumber())
                 .countryCode(employee.getCountryCode())
 
-                
-                .employmentType(employee.getEmploymentType())
-                .mode(employee.getMode())
-                .dateOfJoining(employee.getDateOfJoining())
-                .probationPeriodMonths(employee.getProbationPeriodMonths())
-                .managerId(employee.getManagerId())
-
-                
                 .designation(employee.getDesignation() != null
                         ? employee.getDesignation().getName()
                         : null)
@@ -46,12 +38,17 @@ public class EmployeeMapper {
                         ? employee.getDepartment().getName()
                         : null)
 
-                
-                .status(employee.getStatus() != null
-                        ? employee.getStatus().name()
+                .employment(emp != null
+                        ? EmploymentResponseDTO.builder()
+                            .employmentType(emp.getEmploymentType())
+                            .mode(emp.getMode())
+                            .dateOfJoining(emp.getDateOfJoining())
+                            .probationPeriodMonths(emp.getProbationPeriodMonths())
+                            .managerId(emp.getManagerId())
+                            .status(emp.getStatus())
+                            .isActive(emp.getIsActive())
+                            .build()
                         : null)
-
-                .isActive(employee.getIsActive())
 
                 
                 .addresses(employee.getAddresses() != null
@@ -67,7 +64,7 @@ public class EmployeeMapper {
                             .collect(Collectors.toList())
                         : Collections.emptyList())
 
-               
+              
                 .skills(employee.getSkills() != null
                         ? employee.getSkills().stream()
                             .map(skill -> SkillResponseDTO.builder()
@@ -79,19 +76,17 @@ public class EmployeeMapper {
                         : Collections.emptyList())
 
                 
-                .projects(
-                	    employee.getProjects() != null
-                	        ? employee.getProjects().stream()
-                	            .map(p -> ProjectResponseDTO.builder()
-                	                .projectId(p.getProjectId())
-                	                .projectName(p.getProjectName())
-                	                .role(p.getRole())
-                	                .allocationPercentage(p.getAllocationPercentage())
-                	                .build())
-                	            .collect(Collectors.toList())
-                	        : Collections.emptyList()
-                	)
+                .projects(employee.getProjects() != null
+                        ? employee.getProjects().stream()
+                            .map(project -> ProjectResponseDTO.builder()
+                                .projectId(project.getProjectId())
+                                .projectName(project.getProjectName())
+                                .role(project.getRole())
+                                .allocationPercentage(project.getAllocationPercentage())
+                                .build())
+                            .collect(Collectors.toList())
+                        : Collections.emptyList())
 
-                	.build();
+                .build();
     }
 }
