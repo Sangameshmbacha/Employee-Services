@@ -43,12 +43,13 @@ public class EmployeeRequestDTO {
 
     @NotBlank
     private String designation;
-
-  
+    
     @NotNull
     private EmploymentRequestDTO employment;
 
     private List<AddressDTO> addresses;
     private List<SkillRequestDTO> skills;
     private List<ProjectRequestDTO> projects;
+    
+    
 }

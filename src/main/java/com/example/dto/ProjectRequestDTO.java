@@ -19,7 +19,4 @@ public class ProjectRequestDTO {
 	private Integer allocationPercentage;
 	private List<ProjectRequestDTO> projects;
 
-
-	
-
 }
