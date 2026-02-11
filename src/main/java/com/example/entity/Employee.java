@@ -69,7 +69,6 @@ public class Employee {
     @Enumerated(EnumType.STRING)
     private EmploymentMode mode;
     
-//    @JsonIgnore
     @ManyToOne
     @JoinColumn(
         name = "designation_id",
@@ -77,7 +76,6 @@ public class Employee {
     )
     private Designation designation;
 
-//    @JsonIgnore
     @ManyToOne
     @JoinColumn(
         name = "department_id",
@@ -85,15 +83,12 @@ public class Employee {
     )
     private Department department;
 
-//    @JsonIgnore
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private Employment employment;
 
-//    @JsonIgnore
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses;
 
-//    @JsonIgnore
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
         name = "employee_skills",
@@ -102,7 +97,6 @@ public class Employee {
     )
     private Set<Skill> skills = new HashSet<>();
 
-//    @JsonIgnore
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
         name = "employee_project",
