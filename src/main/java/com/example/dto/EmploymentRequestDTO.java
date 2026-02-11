@@ -3,8 +3,6 @@ package com.example.dto;
 import java.time.LocalDate;
 
 import com.example.enums.EmploymentStatus;
-import com.example.enums.EmploymentType;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;

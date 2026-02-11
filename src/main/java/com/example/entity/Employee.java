@@ -7,6 +7,8 @@ import java.util.Set;
 import com.example.enums.EmploymentMode;
 import com.example.enums.EmploymentType;
 import com.example.enums.Gender;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -21,6 +23,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,11 +47,15 @@ public class Employee {
     private Long id;
 
     private String firstName;
+    
+    @Size(min = 2, message = "Last name must be at least 2 characters")
     private String lastName;
 
     private LocalDate dateOfBirth;
 
     private String nationality;
+    @Email(message = "Invalid email format")
+    @NotBlank(message = "Email is required")
     private String email;
     private String countryCode;
     private Long phoneNumber;
@@ -54,19 +63,13 @@ public class Employee {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    
     @Enumerated(EnumType.STRING)
     private EmploymentType employmentType;
 
     @Enumerated(EnumType.STRING)
     private EmploymentMode mode;
-
-    private LocalDate dateOfJoining;
-    private Integer probationPeriodMonths;
-    private Integer managerId;
-
-
-
+    
+//    @JsonIgnore
     @ManyToOne
     @JoinColumn(
         name = "designation_id",
@@ -74,6 +77,7 @@ public class Employee {
     )
     private Designation designation;
 
+//    @JsonIgnore
     @ManyToOne
     @JoinColumn(
         name = "department_id",
@@ -81,13 +85,15 @@ public class Employee {
     )
     private Department department;
 
- 
+//    @JsonIgnore
     @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private Employment employment;
 
+//    @JsonIgnore
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses;
 
+//    @JsonIgnore
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
         name = "employee_skills",
@@ -96,17 +102,20 @@ public class Employee {
     )
     private Set<Skill> skills = new HashSet<>();
 
- 
+//    @JsonIgnore
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
         name = "employee_project",
         joinColumns = @JoinColumn(name = "employee_id"),
         inverseJoinColumns = @JoinColumn(name = "project_id")
+          
     )
     private Set<Project> projects = new HashSet<>();
-    
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(
+        name = "audit_id",
+        foreignKey = @ForeignKey(name = "fk_employee_audit")
+    )
+    private Audit audit;
 
-   
-
-   
-}
+   }

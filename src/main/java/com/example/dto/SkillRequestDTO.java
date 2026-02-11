@@ -11,7 +11,6 @@ public class SkillRequestDTO {
 	
 	@NotBlank
 	private String name;
-	
 	private String level;
 	private Integer yearsOfExperience;
 

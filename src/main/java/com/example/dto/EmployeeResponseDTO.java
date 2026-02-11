@@ -29,10 +29,10 @@ public class EmployeeResponseDTO {
     private String designation;
     private String department;
 
-    
     private EmploymentResponseDTO employment;
 
     private List<AddressDTO> addresses;
     private List<SkillResponseDTO> skills;
     private List<ProjectResponseDTO> projects;
+    private AuditDTO audit;
 }

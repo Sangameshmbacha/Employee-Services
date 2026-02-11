@@ -22,4 +22,6 @@ public class EmploymentResponseDTO {
     private Integer managerId;
     private EmploymentStatus status;
     private Boolean isActive;
+   
+
 }
