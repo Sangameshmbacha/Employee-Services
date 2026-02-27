@@ -42,7 +42,7 @@ public class EmployeeController {
         @ApiResponse(responseCode = "400", description = "Validation error"),
         @ApiResponse(responseCode = "409", description = "Employee already exists")
     })
-    @PostMapping("/employees")
+    @PostMapping("/employee")
     public ResponseEntity<EmployeeResponseDTO> createEmployee(
             @Valid @RequestBody EmployeeRequestDTO dto) {
 
@@ -76,7 +76,7 @@ public class EmployeeController {
     public ResponseEntity<List<EmployeeResponseDTO>> getEmployees(
 
             @Parameter(description = "Department name")
-            @RequestParam(required = false) String department,
+            @RequestParam(required = false) Long department,
 
             @Parameter(description = "Employment status")
             @RequestParam(required = false) String status,
@@ -85,7 +85,7 @@ public class EmployeeController {
             @RequestParam(required = false) String skill,
 
             @Parameter(description = "Project name")
-            @RequestParam(required = false) String project,
+            @RequestParam(required = false) Long project,
 
             @Parameter(description = "Date of birth")
             @RequestParam(required = false) LocalDate dob,

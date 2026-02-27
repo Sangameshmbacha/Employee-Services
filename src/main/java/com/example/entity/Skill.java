@@ -1,5 +1,10 @@
 package com.example.entity;
+
+import java.util.HashSet;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,9 +21,8 @@ public class Skill {
     private Long id;
 
     private String name;
-    private String level;
-    private Integer yearsOfExperience;
 
-    @ManyToMany(mappedBy = "skills")
-    private Set<Employee> employees;
+    @OneToMany(mappedBy = "skill")
+    @JsonIgnore
+    private Set<EmployeeSkill> employeeSkills = new HashSet<>();
 }

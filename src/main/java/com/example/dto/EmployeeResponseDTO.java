@@ -2,6 +2,7 @@ package com.example.dto;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 import com.example.enums.Gender;
 
@@ -32,7 +33,7 @@ public class EmployeeResponseDTO {
     private EmploymentResponseDTO employment;
 
     private List<AddressDTO> addresses;
-    private List<SkillResponseDTO> skills;
+    private Set<SkillResponseDTO> skills;
     private List<ProjectResponseDTO> projects;
     private AuditDTO audit;
 }

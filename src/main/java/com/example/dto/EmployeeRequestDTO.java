@@ -48,7 +48,7 @@ public class EmployeeRequestDTO {
     private EmploymentRequestDTO employment;
 
     private List<AddressDTO> addresses;
-    private List<SkillRequestDTO> skills;
+    private List<SkillRequestDTO>employeeSkills;
     private List<ProjectRequestDTO> projects;
     
     
