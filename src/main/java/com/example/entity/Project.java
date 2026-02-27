@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "project")
+@Table(name = "projects")
 @Getter
 @Setter
 @Builder
@@ -19,12 +19,13 @@ public class Project {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String projectId;
+
     private String projectName;
-    private String role;
-    private Integer allocationPercentage;
 
-    @ManyToMany(mappedBy = "projects")
-    private Set<Employee> employees = new HashSet<>();
-
+    @OneToMany(mappedBy = "project",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private Set<EmployeeProject> employeeProjects = new HashSet<>();
 }

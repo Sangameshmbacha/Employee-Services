@@ -12,10 +12,10 @@ public interface EmployeeService {
     EmployeeResponseDTO getEmployeeById(Long id);
     
     List<EmployeeResponseDTO> getEmployees(
-            String department,
+            Long department,
             String status,
             String skill,
-            String project,
+            Long project,
             LocalDate dob,
             LocalDate doj
     );

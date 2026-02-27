@@ -13,7 +13,8 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SkillResponseDTO {
 
+    private Long id;
     private String name;
     private String level;
-    private Integer yearsOfExperience;
+    private Integer yearsOfExperience ;
 }

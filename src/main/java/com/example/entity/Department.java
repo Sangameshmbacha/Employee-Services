@@ -1,22 +1,21 @@
 package com.example.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
+import java.io.Serializable;
+
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Getter
-@Setter
-public class Department {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Department implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	private String name;
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
 }
-
-
-
