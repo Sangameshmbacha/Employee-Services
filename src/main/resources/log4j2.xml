@@ -2,12 +2,9 @@
 <Configuration status="WARN">
 
     <Appenders>
-
-     
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern=" LOG4J2 %d{HH:mm:ss} %-5level %c - %msg%n"/>
         </Console>
-
         
         <File name="FileLogger"
               fileName="logs/application.log"
@@ -15,11 +12,9 @@
             <PatternLayout
                 pattern="%d{yyyy-MM-dd HH:mm:ss} %-5level %c{1} - %msg%n"/>
         </File>
-
     </Appenders>
-
+    
    <Loggers>
-
     <Logger name="com.example" level="debug" additivity="false">
         <AppenderRef ref="Console"/>
         <AppenderRef ref="FileLogger"/>
