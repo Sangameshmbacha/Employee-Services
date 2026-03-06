@@ -57,9 +57,8 @@ public class Employee {
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses;
-
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "audit_id",foreignKey = @ForeignKey(name = "fk_employee_audit"))
+    
+    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     private Audit audit;
 	private String countryCode;
 	private Long phoneNumber;

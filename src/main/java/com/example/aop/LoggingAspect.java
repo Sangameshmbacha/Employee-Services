@@ -20,27 +20,34 @@ public class LoggingAspect {
     public Object logExecutionTime(ProceedingJoinPoint joinPoint)
             throws Throwable {
 
+        String className = joinPoint.getTarget().getClass().getSimpleName();
+        String methodName = joinPoint.getSignature().getName();
+
         long startTime = System.currentTimeMillis();
 
-        logger.info("START: {}",
-                joinPoint.getSignature().toShortString());
+        logger.info("Method execution started | Class: {} | Method: {}",
+                className,
+                methodName);
 
         Object result;
 
         try {
             result = joinPoint.proceed();
         } catch (Exception ex) {
-            logger.error("Exception in {} : {}",
-                    joinPoint.getSignature().getName(),
+            logger.error("Exception occurred | Class: {} | Method: {} | Message: {}",
+                    className,
+                    methodName,
                     ex.getMessage());
             throw ex;
         }
 
         long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
 
-        logger.info("END: {} | Time Taken: {} ms",
-                joinPoint.getSignature().getName(),
-                (endTime - startTime));
+        logger.info("Method execution completed | Class: {} | Method: {} | Duration: {} ms",
+                className,
+                methodName,
+                duration);
 
         return result;
     }

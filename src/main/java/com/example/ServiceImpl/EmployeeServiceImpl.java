@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
 
@@ -15,28 +14,13 @@ import com.example.Validator.EmployeeValidator;
 import com.example.cache.DesignationService;
 import com.example.dto.EmployeeRequestDTO;
 import com.example.dto.EmployeeResponseDTO;
-import com.example.entity.Address;
-import com.example.entity.Audit;
-import com.example.entity.Department;
-import com.example.entity.Designation;
-import com.example.entity.Employee;
-import com.example.entity.EmployeeProject;
-import com.example.entity.Employment;
-import com.example.entity.Project;
-import com.example.entity.Skill;
-import com.example.entity.EmployeeSkill;
-import com.example.enums.EmploymentMode;
-import com.example.enums.EmploymentStatus;
-import com.example.enums.EmploymentType;
-import com.example.enums.Gender;
-import com.example.repository.DepartmentRepository;
-import com.example.repository.EmployeeRepository;
-import com.example.repository.ProjectRepository;
-import com.example.repository.SkillRepository;
-import com.example.entity.ChangeLog;
-import com.example.repository.ChangeLogRepository;
-
+import com.example.entity.*;
+import com.example.enums.*;
+import com.example.repository.*;
 import com.example.service.EmployeeService;
+import com.example.cache.DepartmentService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,29 +34,29 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final DepartmentRepository departmentRepository;
     private final SkillRepository skillRepository;
     private final ProjectRepository projectRepository;
-    private final ChangeLogRepository changeLogRepository;
-
     private final DesignationService designationService;
+    private final DepartmentService departmentService;
+    
+    private static final Logger logger =
+            LogManager.getLogger(EmployeeServiceImpl.class);
 
-    private final ConcurrentHashMap<String, Department> departmentCache = new ConcurrentHashMap<>();
 
     @Override
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO dto) {
-    	 System.out.println("createEmployee method ENTERED");
 
+    	logger.info("createEmployee method ENTERED");
         employeeValidator.validateForCreate(dto);
+        
+        logger.info("Creating employee with email: {}", dto.getEmail());
 
-        Department department = departmentCache.computeIfAbsent(
-                dto.getDepartment(),
-                name -> departmentRepository.findByName(name)
-                        .orElseThrow(() ->
-                                new ResourceNotFoundException("Department not found"))
-        );
+        Department department =
+                departmentService.getDepartmentByName(dto.getDepartment());
 
-        Designation designation = designationService.getDesignationByName(dto.getDesignation());
+        logger.debug("Department found: {}", department.getName());
+        Designation designation =
+                designationService.getDesignationByName(dto.getDesignation());
 
         Employee employee = new Employee();
-        
 
         employee.setFirstName(dto.getFirstName());
         employee.setLastName(dto.getLastName());
@@ -90,16 +74,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setDesignation(designation);
 
         if (dto.getEmployment() != null) {
+
             Employment employment = new Employment();
 
             if (dto.getEmployment().getEmploymentType() != null) {
                 employment.setEmploymentType(
-                        EmploymentType.valueOf(dto.getEmployment().getEmploymentType().toUpperCase()));
+                        EmploymentType.valueOf(
+                                dto.getEmployment().getEmploymentType().toUpperCase()));
             }
 
             if (dto.getEmployment().getMode() != null) {
                 employment.setMode(
-                        EmploymentMode.valueOf(dto.getEmployment().getMode().toUpperCase()));
+                        EmploymentMode.valueOf(
+                                dto.getEmployment().getMode().toUpperCase()));
             }
 
             employment.setDateOfJoining(dto.getEmployment().getDateOfJoining());
@@ -128,9 +115,6 @@ public class EmployeeServiceImpl implements EmployeeService {
             );
         }
 
-        Audit audit = new Audit();
-        audit.setEmployee(employee);
-        employee.setAudit(audit);
         if (dto.getProjects() != null && !dto.getProjects().isEmpty()) {
 
             dto.getProjects().forEach(p -> {
@@ -153,6 +137,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 employee.addEmployeeProject(employeeProject);
             });
         }
+
         if (dto.getEmployeeSkills() != null && !dto.getEmployeeSkills().isEmpty()) {
 
             Set<EmployeeSkill> employeeSkills = new HashSet<>();
@@ -161,7 +146,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
                 Skill skill = skillRepository.findById(s.getId())
                         .orElseThrow(() ->
-                                new ResourceNotFoundException("Skill not found with ID: " + s.getId()));
+                                new ResourceNotFoundException(
+                                        "Skill not found with ID: " + s.getId()));
 
                 EmployeeSkill employeeSkill = new EmployeeSkill();
                 employeeSkill.setEmployee(employee);
@@ -175,19 +161,19 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee.setEmployeeSkills(employeeSkills);
         }
 
+        Audit audit = new Audit();
+        audit.setEmployee(employee);
+        audit.setCreatedAt(Instant.now());
+        audit.setCreatedBy("SYSTEM");
+        audit.setLastAction("CREATE");
+        employee.setAudit(audit);
+
         Employee savedEmployee = employeeRepository.save(employee);
-        System.out.println("After employee save: " + savedEmployee.getId());
-        ChangeLog createLog = new ChangeLog(
-                "CREATE",
-                savedEmployee.getId(),
-                "SYSTEM"
-        );
-        System.out.println("Before ChangeLog save");
-        changeLogRepository.save(createLog);
-        System.out.println("After ChangeLog save");
 
         return employeeMapper.toResponseDto(savedEmployee);
     }
+
+    
     @Override
     public List<EmployeeResponseDTO> getEmployees(
             Long department,
@@ -211,6 +197,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .map(employeeMapper::toResponseDto)
                 .toList();
     }
+
     @Override
     public EmployeeResponseDTO getEmployeeById(Long id) {
 
@@ -220,6 +207,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employeeMapper.toResponseDto(employee);
     }
+
     @Override
     public EmployeeResponseDTO updateEmployee(Long id, EmployeeRequestDTO dto) {
 
@@ -242,14 +230,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         employee.getAudit().setUpdatedAt(Instant.now());
         employee.getAudit().setUpdatedBy("SYSTEM");
+        employee.getAudit().setLastAction("UPDATE");
 
         Employee updatedEmployee = employeeRepository.save(employee);
-        ChangeLog updateLog = new ChangeLog(
-                "UPDATE",
-                updatedEmployee.getId(),
-                "SYSTEM"
-        );
-        changeLogRepository.save(updateLog);
 
         return employeeMapper.toResponseDto(updatedEmployee);
     }
@@ -257,18 +240,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void deleteEmployee(Long id) {
 
-        if (!employeeRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Employee not found");
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Employee not found"));
+
+        if (employee.getAudit() != null) {
+            employee.getAudit().markDeleted("SYSTEM");
         }
 
-        employeeRepository.deleteById(id);
-
-        ChangeLog deleteLog = new ChangeLog(
-                "DELETE",
-                id,
-                "SYSTEM"
-        );
-        changeLogRepository.save(deleteLog);
-        
+        employeeRepository.save(employee);
     }
 }
