@@ -172,10 +172,10 @@ void shouldReturnAllWhenNoFilters() {
 void shouldThrowExceptionForDuplicateEmail() {
     Employee emp = new Employee();
     emp.setFirstName("Test");
-    emp.setEmail("shennu@gmail.com"); // already exists
+    emp.setEmail("shennu@gmail.com");
 
     assertThatThrownBy(() -> employeeRepository.saveAndFlush(emp))
-            .isInstanceOf(Exception.class); // can refine later
+            .isInstanceOf(Exception.class);
 }
 @Test
 @DisplayName("Should throw exception when email is null")

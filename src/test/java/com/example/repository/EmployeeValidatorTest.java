@@ -115,7 +115,6 @@ class EmployeeValidatorTest {
 
         EmploymentRequestDTO emp = new EmploymentRequestDTO();
         emp.setDateOfJoining(LocalDate.of(1999, 1, 1));
-
         dto.setEmployment(emp);
 
         when(employeeRepository.existsByEmail(dto.getEmail())).thenReturn(false);
