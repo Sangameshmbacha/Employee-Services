@@ -4,11 +4,9 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import com.example.enums.EmploymentMode;
 import com.example.enums.EmploymentType;
 import com.example.enums.Gender;
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

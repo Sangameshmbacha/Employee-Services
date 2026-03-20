@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
-
 import com.example.Exception.ResourceNotFoundException;
 import com.example.Mapper.EmployeeMapper;
 import com.example.Validator.EmployeeValidator;
@@ -98,7 +97,6 @@ public class EmployeeServiceImpl implements EmployeeService {
             employment.setEmployee(employee);
             employee.setEmployment(employment);
         }
-
         if (dto.getAddresses() != null) {
             employee.setAddresses(
                     dto.getAddresses().stream().map(a -> {
@@ -114,7 +112,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                     }).toList()
             );
         }
-
         if (dto.getProjects() != null && !dto.getProjects().isEmpty()) {
 
             dto.getProjects().forEach(p -> {
@@ -212,7 +209,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeResponseDTO updateEmployee(Long id, EmployeeRequestDTO dto) {
 
         employeeValidator.validateForUpdate(dto);
-
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Employee not found"));
@@ -236,7 +232,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employeeMapper.toResponseDto(updatedEmployee);
     }
-
     @Override
     public void deleteEmployee(Long id) {
 

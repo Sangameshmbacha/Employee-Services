@@ -12,10 +12,8 @@ import com.example.entity.Employee;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     boolean existsByEmail(String email);
-    
-
     @Query("""
-            SELECT e FROM Employee e
+            SELECT DISTINCT e FROM Employee e
             JOIN e.employment emp
             WHERE (:departmentId IS NULL OR e.department.id = :departmentId)
             AND (:status IS NULL OR emp.status = :status)

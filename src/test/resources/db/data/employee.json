@@ -1,0 +1,55 @@
+{
+  "firstName": "Shennu",
+  "lastName": "Patil",
+  "dateOfBirth": "2004-04-15",
+  "gender": "MALE",
+  "nationality": "Indian",
+  "email": "shennu@gmail.com",
+  "countryCode": "+91",
+  "phoneNumber": 9890901001,
+
+  "department": { "id": 1 },
+  "designation": { "id": 1 },
+
+  "employment": {
+    "employmentType": "INTERN",
+    "mode": "WFH",
+    "dateOfJoining": "2024-07-01",
+    "probationPeriodMonths": 6,
+    "managerId": 103,
+    "status": "ACTIVE",
+    "isActive": true
+  },
+
+  "addresses": [
+    {
+      "street": "12 MG Road",
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "zipCode": "560001",
+      "country": "India",
+      "addressType": "OFFICE"
+    }
+  ],
+
+  "employeeSkills": [
+    {
+      "skill": { "id": 1 },
+      "yoe": 3,
+      "level": "Intermediate"
+    }
+  ],
+
+  "employeeProjects": [
+    {
+      "project": { "id": 1 },
+      "allocationPercentage": 50,
+      "role": "Fullstack Developer"
+    }
+  ],
+
+  "audit": {
+    "createdAt": "2026-02-17T16:04:29.711730Z",
+    "createdBy": "SYSTEM"
+  }
+}

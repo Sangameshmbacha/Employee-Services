@@ -7,7 +7,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
-
 import com.example.entity.Skill;
 import com.example.repository.SkillRepository;
 
@@ -54,10 +53,8 @@ public class SkillServiceImpl implements SkillService {
         cacheManager = "caffeineCacheManager"
     )
     public Skill updateSkill(Long id, Skill skill) {
-
         Skill existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Skill not found with id: " + id));
-
         existing.setName(skill.getName());
 
         return repository.save(existing);

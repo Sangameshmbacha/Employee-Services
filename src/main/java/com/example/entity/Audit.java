@@ -26,7 +26,7 @@ public class Audit {
     private Instant deletedAt;
 
     private String lastAction; 
-
+    
     @OneToOne
     @JoinColumn(name = "employee_id", nullable = false, unique = true)
     private Employee employee;
@@ -37,13 +37,11 @@ public class Audit {
         this.createdBy = "SYSTEM";
         this.lastAction = "CREATE";
     }
-
     public void markUpdated(String user) {
         this.updatedAt = Instant.now();
         this.updatedBy = user;
         this.lastAction = "UPDATE";
     }
-
     public void markDeleted(String user) {
         this.deletedAt = Instant.now();
         this.deletedBy = user;

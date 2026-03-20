@@ -9,5 +9,10 @@ class EmployeeServicesApplicationTests {
 	@Test
 	void contextLoads() {
 	}
+	 @Test
+	    void mainMethodTest() {
+	        EmployeeServicesApplication.main(new String[] {});
+	    }
 
 }
+

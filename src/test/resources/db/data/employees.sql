@@ -1,0 +1,24 @@
+INSERT INTO employees (
+    id,
+    first_name,
+    last_name,
+    date_of_birth,
+    gender,
+    nationality,
+    email,
+    country_code,
+    phone_number,
+    department_id,
+    designation_id
+)
+VALUES
+(1,'Shennu','Patil','2004-04-15','MALE','Indian','shennu@gmail.com','+91',9890901001,1,1),
+(2,'Rahul','Sharma','1998-05-10','MALE','Indian','rahul@gmail.com','+91',9890901002,1,1),
+(3,'Priya','Reddy','1999-02-21','FEMALE','Indian','priya@gmail.com','+91',9890901003,1,1),
+(4,'Amit','Kumar','1997-08-14','MALE','Indian','amit@gmail.com','+91',9890901004,1,1),
+(5,'Sneha','Iyer','1996-11-30','FEMALE','Indian','sneha@gmail.com','+91',9890901005,1,1),
+(6,'Vikram','Singh','1995-07-18','MALE','Indian','vikram@gmail.com','+91',9890901006,1,1),
+(7,'Anjali','Nair','1998-03-09','FEMALE','Indian','anjali@gmail.com','+91',9890901007,1,1),
+(8,'Karthik','Rao','1997-12-01','MALE','Indian','karthik@gmail.com','+91',9890901008,1,1),
+(9,'Meena','Joshi','1996-04-22','FEMALE','Indian','meena@gmail.com','+91',9890901009,1,1),
+(10,'Arjun','Verma','1999-06-17','MALE','Indian','arjun@gmail.com','+91',9890901010,1,1);

@@ -1,0 +1,13 @@
+{
+  "firstName": "Shennu",
+  "lastName": null,
+  "dateOfBirth": "2004-04-15",
+  "gender": "MALE",
+  "nationality": "Indian",
+  "email": "shennu_last@gmail.com",
+  "countryCode": "+91",
+  "phoneNumber": 9890901001,
+
+  "department": { "id": 1 },
+  "designation": { "id": 1 }
+}
