@@ -98,7 +98,6 @@ import org.springframework.test.annotation.DirtiesContext;
 	            service.getDepartmentByName(null)
 	        ).isInstanceOf(Exception.class);
 	    }
-
 	    @Test
 	    void shouldRefreshDepartmentCache() {
 	        service.refreshDepartmentCache();
