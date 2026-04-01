@@ -55,7 +55,6 @@ private Employee loadEmployeeFromJson() throws Exception {
 
     Employee employee = objectMapper.readValue(jsonFile, Employee.class);
 
-
     if (employee.getEmployment() != null) {
         employee.getEmployment().setEmployee(employee);
     }

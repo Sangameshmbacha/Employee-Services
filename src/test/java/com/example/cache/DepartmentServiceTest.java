@@ -123,4 +123,4 @@ import org.springframework.test.annotation.DirtiesContext;
 	            service.getDepartmentByName("IT")
 	        ).isInstanceOf(RuntimeException.class);
 	    }
-	}
+}

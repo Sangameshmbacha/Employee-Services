@@ -12,27 +12,49 @@ import com.example.entity.Employee;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     boolean existsByEmail(String email);
+//    @Query("""
+//            SELECT DISTINCT e FROM Employee e
+////            JOIN e.employment emp
+//            LEFT JOIN e.employment emp
+//            WHERE (:departmentId IS NULL OR e.department.id = :departmentId)
+//            AND (:status IS NULL OR emp.status = :status)
+//            AND (:dob IS NULL OR e.dateOfBirth = :dob)
+//            AND (:doj IS NULL OR emp.dateOfJoining = :doj)
+//            
+//            AND (:skill IS NULL OR EXISTS (
+//                SELECT 1 FROM EmployeeSkill es
+//                JOIN es.skill s
+//                WHERE es.employee = e
+//                AND s.name = :skill
+//            ))
+//            
+//            AND (:projectId IS NULL OR EXISTS (
+//                SELECT 1 FROM EmployeeProject ep
+//                WHERE ep.employee = e
+//                AND ep.project.id = :projectId
+//            ))
+//            """)
     @Query("""
-            SELECT DISTINCT e FROM Employee e
-            JOIN e.employment emp
-            WHERE (:departmentId IS NULL OR e.department.id = :departmentId)
-            AND (:status IS NULL OR emp.status = :status)
-            AND (:dob IS NULL OR e.dateOfBirth = :dob)
-            AND (:doj IS NULL OR emp.dateOfJoining = :doj)
-            
-            AND (:skill IS NULL OR EXISTS (
-                SELECT 1 FROM EmployeeSkill es
-                JOIN es.skill s
-                WHERE es.employee = e
-                AND s.name = :skill
-            ))
-            
-            AND (:projectId IS NULL OR EXISTS (
-                SELECT 1 FROM EmployeeProject ep
-                WHERE ep.employee = e
-                AND ep.project.id = :projectId
-            ))
-            """)
+    	    SELECT DISTINCT e FROM Employee e
+    	    LEFT JOIN e.employment emp
+    	    WHERE (:departmentId IS NULL OR e.department.id = :departmentId)
+    	    AND (:status IS NULL OR (emp IS NOT NULL AND emp.status = :status))
+    	    AND (:dob IS NULL OR e.dateOfBirth = :dob)
+    	    AND (:doj IS NULL OR (emp IS NOT NULL AND emp.dateOfJoining = :doj))
+    	    
+    	    AND (:skill IS NULL OR EXISTS (
+    	        SELECT 1 FROM EmployeeSkill es
+    	        JOIN es.skill s
+    	        WHERE es.employee = e
+    	        AND LOWER(s.name) = LOWER(:skill)
+    	    ))
+    	    
+    	    AND (:projectId IS NULL OR EXISTS (
+    	        SELECT 1 FROM EmployeeProject ep
+    	        WHERE ep.employee = e
+    	        AND ep.project.id = :projectId
+    	    ))
+    	""")
     List<Employee> searchEmployees(
             @Param("departmentId") Long departmentId,
             @Param("status") com.example.enums.EmploymentStatus status,

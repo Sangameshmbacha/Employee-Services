@@ -3,21 +3,27 @@ package com.example.controller;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import java.util.List;
+
 import com.example.Exception.DuplicateResourceException;
 import com.example.Exception.ResourceAlreadyExistsException;
 import com.example.Exception.ResourceNotFoundException;
 import com.example.dto.EmployeeResponseDTO;
 import com.example.service.EmployeeService;
+import com.example.util.JwtUtil;  
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc; // ✅ ADD
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(EmployeeController.class)
+@AutoConfigureMockMvc(addFilters = false)   
 class GlobalExceptionHandlerTest {
 
     @Autowired
@@ -25,6 +31,10 @@ class GlobalExceptionHandlerTest {
 
     @MockBean
     private EmployeeService employeeService;
+
+    @MockBean
+    private JwtUtil jwtUtil;   
+
     @Test
     @DisplayName("Should return 404 when employee not found")
     void shouldHandleResourceNotFoundException() throws Exception {
@@ -36,6 +46,7 @@ class GlobalExceptionHandlerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("Employee not found"));
     }
+
     @Test
     @DisplayName("Should return 409 for duplicate resource")
     void shouldHandleDuplicateResourceException() throws Exception {
@@ -47,6 +58,7 @@ class GlobalExceptionHandlerTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").value("Duplicate resource"));
     }
+
     @Test
     @DisplayName("Should return 409 when resource already exists")
     void shouldHandleResourceAlreadyExistsException() throws Exception {
@@ -58,6 +70,7 @@ class GlobalExceptionHandlerTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.error").value("Already exists"));
     }
+
     @Test
     @DisplayName("Should return 400 for invalid input")
     void shouldHandleIllegalArgumentException() throws Exception {
@@ -69,6 +82,7 @@ class GlobalExceptionHandlerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Invalid input"));
     }
+
     @Test
     @DisplayName("Should return 400 for validation errors")
     void shouldHandleValidationException() throws Exception {
@@ -80,6 +94,7 @@ class GlobalExceptionHandlerTest {
                 .content(invalidJson))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     void shouldGetEmployeeById() throws Exception {
 
@@ -89,6 +104,7 @@ class GlobalExceptionHandlerTest {
         mockMvc.perform(get("/api/v1/employees/1"))
                 .andExpect(status().isOk());
     }
+
     @Test
     void shouldGetEmployees() throws Exception {
 
@@ -98,6 +114,7 @@ class GlobalExceptionHandlerTest {
         mockMvc.perform(get("/api/v1/employees"))
                 .andExpect(status().isOk());
     }
+
     @Test
     void shouldDeleteEmployee() throws Exception {
 

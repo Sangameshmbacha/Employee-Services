@@ -116,5 +116,4 @@ import org.springframework.test.annotation.DirtiesContext;
 	        Designation result = service.getDesignationByName("Lead");
 
 	        assertThat(result).isNotNull();
-	    }
-	}
+	    }}
